@@ -1,1 +1,1 @@
-rootProject.name = "ascii-text-signature"
+rootProject.name = "kotlin-sandbox"
