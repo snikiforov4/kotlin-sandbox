@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm")
     application
 }
 
@@ -12,18 +12,11 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
-}
+subprojects {
+    repositories { mavenCentral() }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
-application {
-    mainClass.set("MainKt")
+    val javaLanguageVersion: String by project
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = javaLanguageVersion
+    }
 }
