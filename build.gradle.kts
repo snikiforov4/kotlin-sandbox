@@ -10,13 +10,9 @@ repositories {
     mavenCentral()
 }
 
-subprojects {
-    repositories { mavenCentral() }
-
-    val javaLanguageVersion: String by project
-    kotlin {
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of(javaLanguageVersion))
-        }
+kotlin {
+    jvmToolchain {
+        val javaLanguageVersion: String by project
+        languageVersion.set(JavaLanguageVersion.of(javaLanguageVersion))
     }
 }
