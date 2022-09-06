@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     application
@@ -16,7 +14,9 @@ subprojects {
     repositories { mavenCentral() }
 
     val javaLanguageVersion: String by project
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = javaLanguageVersion
+    kotlin {
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of(javaLanguageVersion))
+        }
     }
 }
