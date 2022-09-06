@@ -1,20 +1,23 @@
-package signature
+package banner
 
+import banner.font.Font
+import banner.font.getTitleFont
+import banner.font.getSubtitleFont
 import kotlin.math.max
 
-private const val FRAME = "8"
+private const val FRAME_CHAR = "8"
 private const val BORDER_WIDTH = 2
 private const val CONTENT_EXTRA_SPACE_ON_SIDES = 4
 
 fun main() {
     val (name, status) = readTag()
-    val printableName = toPrintableForm(name, ::getPersonalNameFont)
-    val printableStatus = toPrintableForm(status, ::getStatusFont)
-    val contentLength = max(printableName.first().length, printableStatus.first().length) +
+    val printableTitle = toPrintableForm(name, ::getTitleFont)
+    val printableSubtitle = toPrintableForm(status, ::getSubtitleFont)
+    val contentLength = max(printableTitle.first().length, printableSubtitle.first().length) +
             CONTENT_EXTRA_SPACE_ON_SIDES
-    val borderLine = FRAME.repeat(contentLength + 2 * BORDER_WIDTH)
-    val nameLines = toPrintableLines(contentLength, printableName)
-    val statusLines = toPrintableLines(contentLength, printableStatus)
+    val borderLine = FRAME_CHAR.repeat(contentLength + 2 * BORDER_WIDTH)
+    val nameLines = toPrintableLines(contentLength, printableTitle)
+    val statusLines = toPrintableLines(contentLength, printableSubtitle)
 
     println(borderLine)
     nameLines.forEach(::println)
@@ -22,15 +25,15 @@ fun main() {
     println(borderLine)
 }
 
-private fun readTag(): Tag {
-    print("Enter name and surname: ")
-    val name = readln().trim()
-    print("Enter person's status: ")
-    val status = readln().trim()
-    return Tag(name, status)
-}
+data class Tag(val title: String, val subtitle: String)
 
-data class Tag(val name: String, val status: String)
+private fun readTag(): Tag {
+    print("Enter title text: ")
+    val title = readln().trim()
+    print("Enter subtitle line: ")
+    val subtitle = readln().trim()
+    return Tag(title, subtitle)
+}
 
 private fun toPrintableForm(name: String, fontProvider: () -> Font): List<String> {
     val font = fontProvider()
@@ -51,11 +54,11 @@ private fun toPrintableLines(
     val totalPaddingForName = contentLength - printableContent.first().length
     val nameLines = List(printableContent.size) {
         buildString {
-            append(FRAME.repeat(BORDER_WIDTH))
+            append(FRAME_CHAR.repeat(BORDER_WIDTH))
             append(" ".repeat(totalPaddingForName / 2))
             append(printableContent[it])
             append(" ".repeat((totalPaddingForName + 1) / 2))
-            append(FRAME.repeat(BORDER_WIDTH))
+            append(FRAME_CHAR.repeat(BORDER_WIDTH))
         }
     }
     return nameLines

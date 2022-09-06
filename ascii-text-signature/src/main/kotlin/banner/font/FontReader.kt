@@ -1,18 +1,21 @@
-package signature
+package banner.font
 
 import java.io.File
-
-private const val PERSONAL_NAME_FONT_PATH = "roman.txt"
-private const val PERSONAL_NAME_FONT_SPACE_LENGTH = 10
-
-private const val STATUS_FONT_PATH = "medium.txt"
-private const val STATUS_FONT_SPACE_LENGTH = 5
+import java.util.concurrent.ConcurrentHashMap
 
 private val delimiterRegexp = "\\s+".toRegex()
 
-fun getPersonalNameFont(): Font = readFontFrom(FontMeta(PERSONAL_NAME_FONT_PATH, PERSONAL_NAME_FONT_SPACE_LENGTH))
+sealed interface FontReader {
+    fun read(fontMeta: FontMeta): Font
+}
 
-fun getStatusFont(): Font = readFontFrom(FontMeta(STATUS_FONT_PATH, STATUS_FONT_SPACE_LENGTH))
+object CacheableFontReader : FontReader {
+    private val cache = ConcurrentHashMap<String, Font>()
+
+    override fun read(fontMeta: FontMeta): Font = cache.computeIfAbsent(fontMeta.path) {
+        readFontFrom(fontMeta)
+    }
+}
 
 private fun readFontFrom(fontMeta: FontMeta): Font {
     val file = File(ClassLoader.getSystemResource(fontMeta.path).toURI().path)
@@ -34,11 +37,3 @@ private fun readFontFrom(fontMeta: FontMeta): Font {
     alphabet[' '] = space
     return Font(charHeight, alphabet)
 }
-
-class Font(val charHeight: Int, private val alphabet: Map<Char, List<String>>) {
-    fun byChar(char: Char): List<String> {
-        return alphabet[char]!!
-    }
-}
-
-private class FontMeta(val path: String, val spaceLength: Int)
